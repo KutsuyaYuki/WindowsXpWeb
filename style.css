@@ -279,7 +279,6 @@ flex-direction: row;
 }
 .start-menu {
     position: absolute;
-    bottom: -1px;
     left: 0;
     width: 280px;
     /* padding: 5px; */
@@ -292,7 +291,7 @@ flex-direction: row;
     display: none;
     z-index: 3;
     height: 300px;
-    bottom: 50px;
+    bottom: 30px;
 }
 .start-menu-header {
     display: flex;

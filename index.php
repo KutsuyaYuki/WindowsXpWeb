@@ -38,7 +38,20 @@
     <div class="taskbar">
         <div class="start-button">
             Start
-            <div class="start-menu">
+        </div>
+        <div class="quick-launch">
+            <button class="quick-launch-button">
+                <img src="images/icons/desktop.png" class="show-desktop" alt="Show Desktop" width="24" height="24"/>
+            </button>
+            <button class="quick-launch-button">
+                <img src="images/icons/explorer.png" class="show-explorer" alt="Explorer" width="24" height="24"/>
+            </button>
+        </div>
+        <div class="open-windows-list"></div>
+    </div>
+    <div class="clock" id="current-time"></div>
+
+    <div class="start-menu">
                 <div class="start-menu-header">
                     <div class="start-menu-header-left">
                         <span>Start</span>
@@ -95,18 +108,6 @@
                     </button> -->
                 </div>
             </div>
-        </div>
-        <div class="quick-launch">
-            <button class="quick-launch-button">
-                <img src="images/icons/desktop.png" class="show-desktop" alt="Show Desktop" width="24" height="24"/>
-            </button>
-            <button class="quick-launch-button">
-                <img src="images/icons/explorer.png" class="show-explorer" alt="Explorer" width="24" height="24"/>
-            </button>
-        </div>
-        <div class="open-windows-list"></div>
-    </div>
-    <div class="clock" id="current-time"></div>
 </body>
 
 </html>

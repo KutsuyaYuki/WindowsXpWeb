@@ -1,18 +1,37 @@
 $(function () {
-  // Set initial variables
   let maxZIndex = 9999;
   let startMenuOpen = false;
 
-  $(document).ready(function () {
-    // Register the initial window in the taskbar
+  initialize();
+  
+  function initialize() {
+    registerInitialWindow();
+    makeAllWindowsDraggable();
+    toggleMenuBar();
+
+    $(document).on("mousedown", ".window", handleWindowMouseDown);
+    $(document).on("click", ".open-window-entry", handleOpenWindowEntryClick);
+    $(document).on("click", ".minimize-button", handleMinimizeButtonClick);
+    $(document).on("click", ".close-button", handleCloseButtonClick);
+    $(".start-button").click(handleStartButtonClick);
+    $(document).on("click", ".show-explorer", handleShowExplorerButtonClick);
+    $(document).on("click", ".show-desktop", handleShowDesktopButtonClick);
+    $(document).on("click", ".window button[aria-label='OK']", handleCloseButtonClick);
+    $(".start-menu-item p").click(handleStartMenuItemClick);
+    $(".sub-menu-item:contains('Exit')").click(handleExitSubMenuItemClick);
+    $(document).keyup(handleEscapeKeyPress);
+
+    updateTime();
+    setInterval(updateTime, 1000);
+  }
+
+  function registerInitialWindow() {
     let initialWindowTitle = $('.window[data-window-id="initial-window"] .title-bar-text').text();
     let initialWindowEntry = $('<div class="open-window-entry" data-window-id="initial-window">' + initialWindowTitle + '</div>');
     $(".open-windows-list").append(initialWindowEntry);
-  });
+  }
 
-
-  // Handle window click and drag events
-  $(document).on("mousedown", ".window", function () {
+  function handleWindowMouseDown() {
     maxZIndex += 2;
 
     $(this).css("zIndex", maxZIndex - 1);
@@ -23,9 +42,18 @@ $(function () {
 
     const windowId = $(this).data("window-id");
     updateTaskbar(windowId);
-  });
+  }
 
-  // Function to make a window draggable
+  function makeAllWindowsDraggable() {
+    $(".window").each(function () {
+      makeWindowDraggable($(this));
+      let zIndex = parseInt($(this).css("zIndex"));
+      if (zIndex > maxZIndex) {
+        maxZIndex = zIndex;
+      }
+    });
+  }
+
   function makeWindowDraggable(windowElement) {
     windowElement.draggable({
       snap: true,
@@ -51,69 +79,54 @@ $(function () {
     $("#current-time").show(); // Always show the clock
   }
 
-
-  // Initialize draggable windows
-  $(".window").each(function () {
-    makeWindowDraggable($(this));
-    let zIndex = parseInt($(this).css("zIndex"));
-    if (zIndex > maxZIndex) {
-      maxZIndex = zIndex;
-    }
-  });
-
-  // Initialize menu bar
-  toggleMenuBar();
-
-
-  // Handle open window entry click (taskbar entry click)
-  $(document).on("click", ".open-window-entry", function () {
+  function handleOpenWindowEntryClick() {
     let windowId = $(this).data("window-id");
     let windowElement = $(".window[data-window-id='" + windowId + "']");
 
-    // Check if the window is hidden (minimized)
     if (windowElement.is(":hidden")) {
-      // Show the window if it's minimized
       windowElement.css("display", "block");
 
       maxZIndex += 2;
       windowElement.css("zIndex", maxZIndex - 1);
       $(".menu-bar").css("zIndex", maxZIndex);
     } else {
-      // Minimize the window if it's visible
       windowElement.hide();
     }
-  });
+  }
 
-  // Handle minimize button click
-  $(document).on("click", ".minimize-button", function () {
-    let windowElement = $(this).closest(".window");
-    windowElement.css("visibility", "hidden");
-  });
-
-  // Handle close button click
-  $(document).on("click", ".close-button", function () {
-    let windowElement = $(this).closest(".window");
-    let windowId = windowElement.data("window-id"); // Retrieve the window ID from the data attribute
+  function handleMinimizeButtonClick() {
+    const windowElement = $(this).closest(".window");
     windowElement.hide();
     toggleMenuBar();
+  }
 
-    // Remove the entry from the open windows list using the unique window ID
+  function handleCloseButtonClick() {
+    const windowElement = $(this).closest(".window");
+    const windowId = windowElement.data("window-id");
+    windowElement.remove();
     $(".open-window-entry[data-window-id='" + windowId + "']").remove();
-  });
+    toggleMenuBar();
+  }
 
-  // Handle start button click
-  $(".start-button").click(function () {
-    if (!startMenuOpen) {
-      $(".start-menu").css({ bottom: "30px" }).show();
-      startMenuOpen = true;
+  function handleStartButtonClick() {
+    startMenuOpen = !startMenuOpen;
+    if (startMenuOpen) {
+      $(".start-menu").show();
     } else {
       $(".start-menu").hide();
-      startMenuOpen = false;
     }
-  });
+  }
 
-  // Toggle all windows function
-  function toggleAllWindows() {
+  function handleShowExplorerButtonClick() {
+    let explorerWindow = $(".window[data-window-id='explorer-window']");
+    if (explorerWindow.length === 0) {
+      createNewWindow("Explorer", "<p>Explorer window content here</p>");
+    } else {
+      explorerWindow.show();
+    }
+  }
+
+  function handleShowDesktopButtonClick() {
     let allWindows = $(".window");
     let hiddenWindows = allWindows.filter(":hidden");
 
@@ -126,54 +139,8 @@ $(function () {
     }
   }
 
-  function openExplorerWindow() {
-    let windowId = 'window-' + Date.now();
-    const explorerWindow = `
-  <div class="window" style="width: 350px" data-window-id="${windowId}">
-      <div class="title-bar">
-          <div class="title-bar-text">
-              Explorer
-          </div>
-          <div class="title-bar-controls">
-              <button class="minimize-button" aria-label="Minimize"></button>
-              <button class="maximize-button" aria-label="Maximize"></button>
-              <button class="close-button" aria-label="Close"></button>
-          </div>
-      </div>
-      <div class="window-body">
-          <p>Explorer window content goes here.</p>
-      </div>
-  </div>`;
-    $("body").append(explorerWindow);
-
-    // Calculate the position for the new window
-    const windowWidth = $(window).width();
-    const windowHeight = $(window).height();
-    const explorerWindowWidth = $(".window:last").outerWidth();
-    const explorerWindowHeight = $(".window:last").outerHeight();
-    const left = (windowWidth - explorerWindowWidth) / 2;
-    const top = (windowHeight - explorerWindowHeight) / 2;
-
-    // Position the new window in the center
-    $(".window:last").css({ top: top, left: left }).draggable({ handle: ".title-bar" }).resizable();
-
-    createTaskbarEntry("Explorer", windowId);
-  }
-
-  // Handle show explorer button click
-  $(document).on("click", ".show-explorer", function () {
-    openExplorerWindow();
-  });
-
-
-  // Handle show desktop button click
-  $(document).on("click", ".show-desktop", function () {
-    toggleAllWindows();
-  });
-
-
-  function createWindow(title) {
-    let windowId = 'window-' + Date.now();
+  function handleStartMenuItemClick() {
+    let title = $(this).text();
     let extensions = ['html', 'php', 'txt'];
     let basePath = 'apps/' + title.toLowerCase();
     let contentFound = false;
@@ -193,42 +160,8 @@ $(function () {
           if (contentFound) return;
 
           contentFound = true;
-          let newWindow = $('<div class="window" style="margin: 32px; width: 350px" data-window-id="' + windowId + '">' +
-            '<div class="title-bar">' +
-            '<div class="title-bar-text">' + title + '</div>' +
-            '<div class="title-bar-controls">' +
-            '<button class="minimize-button" aria-label="Minimize"></button>' +
-            '<button class="maximize-button" aria-label="Maximize"></button>' +
-            '<button class="close-button" aria-label="Close"></button>' +
-            '</div>' +
-            '</div>' +
-            '<div class="window-body">' +
-            '<div style="display: flex; align-items:center;">' + content + '</div>' +
-            '<section class="field-row" style="justify-content: flex-end">' +
-            '<button aria-label="OK">OK</button>' +
-            '</section>' +
-            '</div>' +
-            '</div>');
 
-          $('body').append(newWindow);
-
-          makeWindowDraggable(newWindow);
-          maxZIndex++;
-          newWindow.css("zIndex", maxZIndex);
-          toggleMenuBar();
-
-          // Calculate the position for the new window
-          const windowWidth = $(window).width();
-          const windowHeight = $(window).height();
-          const explorerWindowWidth = $(".window:last").outerWidth();
-          const explorerWindowHeight = $(".window:last").outerHeight();
-          const left = (windowWidth - explorerWindowWidth) / 2;
-          const top = (windowHeight - explorerWindowHeight) / 2;
-
-          // Position the new window in the center
-          $(".window:last").css({ top: top, left: left }).draggable({ handle: ".title-bar" }).resizable();
-
-          createTaskbarEntry(title, windowId);
+          createNewWindow(title, content);
 
         },
         error: function () {
@@ -240,77 +173,36 @@ $(function () {
     }
 
     tryLoadContent(0);
+
+    $(".start-menu").hide();
+    startMenuOpen = false;
   }
 
-  // Handle OK button click
-  $(document).on("click", ".window button[aria-label='OK']", function () {
-    let windowElement = $(this).closest(".window");
-    let windowId = windowElement.data("window-id");
-    windowElement.hide();
-    toggleMenuBar();
+  function handleExitSubMenuItemClick() {
+    $(".window").hide();
+    $(".menu-bar").hide();
+    $(".start-menu").hide();
+    startMenuOpen = false;
+  }
 
-    // Remove the entry from the open windows list using the unique window ID
-    $(".open-window-entry[data-window-id='" + windowId + "']").remove();
-  });
-
-  // Handle start menu item click
-  $(".start-menu-item p").click(function () {
-    let title = $(this).text();
-    createWindow(title);
-  });
-
-  // Handle exit submenu item click
-  $(".sub-menu-item:contains('Exit')").click(function () {
-    let visibleWindows = $(".window").filter(":visible");
-    if (visibleWindows.length > 0) {
-      let topZIndex = -1;
-      let topWindow = null;
-      visibleWindows.each(function () {
-        let zIndex = parseInt($(this).css("zIndex"));
-        if (zIndex > topZIndex) {
-          topZIndex = zIndex;
-          topWindow = $(this);
-        }
-      });
-      topWindow.hide();
-      toggleMenuBar();
+  function handleEscapeKeyPress(e) {
+    if (e.keyCode == 27) {
+      $(".start-menu").hide();
+      startMenuOpen = false;
     }
-  });
+  }
 
-  // Handle escape key press
-  $(document).keyup(function (e) {
-    if (e.key === "Escape") {
-      let visibleWindows = $(".window").filter(":visible");
-      if (visibleWindows.length > 0) {
-        let topZIndex = -1;
-        let topWindow = null;
-        visibleWindows.each(function () {
-          let zIndex = parseInt($(this).css("zIndex"));
-          if (zIndex > topZIndex) {
-            topZIndex = zIndex;
-            topWindow = $(this);
-          }
-        });
-        let windowId = topWindow.data("window-id"); // Retrieve the window ID from the data attribute
-        topWindow.hide();
-        toggleMenuBar();
-
-        // Remove the entry from the open windows list using the unique window ID
-        $(".open-window-entry[data-window-id='" + windowId + "']").remove();
-
-      }
-    }
-  });
+  function updateTime() {
+    const currentTime = new Date();
+    const hours = currentTime.getHours();
+    const minutes = currentTime.getMinutes();
+    const formattedTime = (hours < 10 ? "0" + hours : hours) + ":" + (minutes < 10 ? "0" + minutes : minutes);
+    $("#current-time").text(formattedTime);
+  }
 
   function updateTaskbar(windowId) {
-    const openWindowEntries = document.querySelectorAll('.open-window-entry');
-    openWindowEntries.forEach(entry => {
-      if (entry.dataset.windowId === windowId) {
-        entry.classList.add('selected');
-      } else {
-        entry.classList.remove('selected');
-      }
-    });
+    $(".open-window-entry").removeClass("active-window-entry");
+    $(".open-window-entry[data-window-id='" + windowId + "']").addClass("active-window-entry");
   }
 
   function createTaskbarEntry(title, windowId) {
@@ -318,25 +210,40 @@ $(function () {
     $(".open-windows-list").append(taskbarEntry);
   }
 
+  function createNewWindow(title, content) {
+    let windowId = 'window-' + Date.now();
+    // You can define the contents and structure of the new Explorer window here.
+    // This is just a sample structure, modify it to fit your needs.
+    const explorerWindow = $(`<div class="window" data-window-id="${windowId}">
+      <div class="title-bar">
+        <div class="title-bar-text">${title}</div>
+        <div class="title-bar-controls">
+          <button aria-label="Minimize" class="minimize-button"></button>
+          <button aria-label="Maximize" class="maximize-button"></button>
+          <button aria-label="Close" class="close-button"></button>
+        </div>
+      </div>
+      <div class="window-body">
+      ${content}
+      </div>
+    </div>`);
 
+    $("body").append(explorerWindow);
+    makeWindowDraggable(explorerWindow);
+    createTaskbarEntry(title, windowId);
 
-  // Function to update the time displayed on the clock
-  function updateTime() {
-    let currentTime = new Date();
-    let hours = currentTime.getHours();
-    let minutes = currentTime.getMinutes();
-    let seconds = currentTime.getSeconds();
-    let ampm = hours >= 12 ? 'PM' : 'AM';
-    hours = hours % 12;
-    hours = hours ? hours : 12; // the hour '0' should be '12'
-    minutes = minutes < 10 ? '0' + minutes : minutes;
-    seconds = seconds < 10 ? '0' + seconds : seconds;
-    let timeString = hours + ':' + minutes + ':' + seconds + ' ' + ampm;
-    $(".clock").text(timeString);
+    const newWindow = $(`.window[data-window-id='${windowId}']`);
+
+    // Calculate the position for the new window
+    const windowWidth = $(window).width();
+    const windowHeight = $(window).height();
+    const newWindowWidth = newWindow.outerWidth();
+    const newWindowHeight = newWindow.outerHeight();
+    const left = (windowWidth - newWindowWidth) / 2;
+    const top = (windowHeight - newWindowHeight) / 2;
+
+    // Position the new window in the center
+    newWindow.css({ top: top, left: left }).resizable();
+
   }
-
-  // Initialize and update the clock
-  updateTime();
-  setInterval(updateTime, 1000);
-
 });
