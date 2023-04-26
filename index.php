@@ -98,10 +98,10 @@
         </div>
         <div class="quick-launch">
             <button class="quick-launch-button">
-                <img src="images/icons/desktop.png" alt="Show Desktop" width="24" height="24"/>
+                <img src="images/icons/desktop.png" class="show-desktop" alt="Show Desktop" width="24" height="24"/>
             </button>
             <button class="quick-launch-button">
-                <img src="images/icons/explorer.png" alt="Explorer" width="24" height="24"/>
+                <img src="images/icons/explorer.png" class="show-explorer" alt="Explorer" width="24" height="24"/>
             </button>
         </div>
         <div class="open-windows-list"></div>

@@ -9,21 +9,21 @@ $(function () {
     let initialWindowEntry = $('<div class="open-window-entry" data-window-id="initial-window">' + initialWindowTitle + '</div>');
     $(".open-windows-list").append(initialWindowEntry);
   });
-  
 
-// Handle window click and drag events
-$(document).on("mousedown", ".window", function () {
-  maxZIndex += 2;
-  
-  $(this).css("zIndex", maxZIndex - 1);
-  $(".menu-bar").css("zIndex", maxZIndex);
-  console.log("Window dragged");
-  $(".window").removeClass("active-window");
-  $(this).addClass("active-window");
-  
-  const windowId = $(this).data("window-id");
-  updateTaskbar(windowId);
-});
+
+  // Handle window click and drag events
+  $(document).on("mousedown", ".window", function () {
+    maxZIndex += 2;
+
+    $(this).css("zIndex", maxZIndex - 1);
+    $(".menu-bar").css("zIndex", maxZIndex);
+    console.log("Window dragged");
+    $(".window").removeClass("active-window");
+    $(this).addClass("active-window");
+
+    const windowId = $(this).data("window-id");
+    updateTaskbar(windowId);
+  });
 
   // Function to make a window draggable
   function makeWindowDraggable(windowElement) {
@@ -50,7 +50,7 @@ $(document).on("mousedown", ".window", function () {
     }
     $("#current-time").show(); // Always show the clock
   }
-    
+
 
   // Initialize draggable windows
   $(".window").each(function () {
@@ -65,41 +65,41 @@ $(document).on("mousedown", ".window", function () {
   toggleMenuBar();
 
 
-// Handle open window entry click (taskbar entry click)
-$(document).on("click", ".open-window-entry", function () {
-  let windowId = $(this).data("window-id");
-  let windowElement = $(".window[data-window-id='" + windowId + "']");
+  // Handle open window entry click (taskbar entry click)
+  $(document).on("click", ".open-window-entry", function () {
+    let windowId = $(this).data("window-id");
+    let windowElement = $(".window[data-window-id='" + windowId + "']");
 
-  // Check if the window is hidden (minimized)
-  if (windowElement.is(":hidden")) {
-    // Show the window if it's minimized
-    windowElement.css("display", "block");
+    // Check if the window is hidden (minimized)
+    if (windowElement.is(":hidden")) {
+      // Show the window if it's minimized
+      windowElement.css("display", "block");
 
-    maxZIndex += 2;
-    windowElement.css("zIndex", maxZIndex - 1);
-    $(".menu-bar").css("zIndex", maxZIndex);
-  } else {
-    // Minimize the window if it's visible
+      maxZIndex += 2;
+      windowElement.css("zIndex", maxZIndex - 1);
+      $(".menu-bar").css("zIndex", maxZIndex);
+    } else {
+      // Minimize the window if it's visible
+      windowElement.hide();
+    }
+  });
+
+  // Handle minimize button click
+  $(document).on("click", ".minimize-button", function () {
+    let windowElement = $(this).closest(".window");
+    windowElement.css("visibility", "hidden");
+  });
+
+  // Handle close button click
+  $(document).on("click", ".close-button", function () {
+    let windowElement = $(this).closest(".window");
+    let windowId = windowElement.data("window-id"); // Retrieve the window ID from the data attribute
     windowElement.hide();
-  }
-});
+    toggleMenuBar();
 
-// Handle minimize button click
-$(document).on("click", ".minimize-button", function () {
-  let windowElement = $(this).closest(".window");
-  windowElement.css("visibility","hidden");
-});
-
-// Handle close button click
-$(document).on("click", ".close-button", function () {
-  let windowElement = $(this).closest(".window");
-  let windowId = windowElement.data("window-id"); // Retrieve the window ID from the data attribute
-  windowElement.hide();
-  toggleMenuBar();
-
-  // Remove the entry from the open windows list using the unique window ID
-  $(".open-window-entry[data-window-id='" + windowId + "']").remove();
-});
+    // Remove the entry from the open windows list using the unique window ID
+    $(".open-window-entry[data-window-id='" + windowId + "']").remove();
+  });
 
   // Handle start button click
   $(".start-button").click(function () {
@@ -113,23 +113,63 @@ $(document).on("click", ".close-button", function () {
   });
 
   // Toggle all windows function
-function toggleAllWindows() {
-  let allWindows = $(".window");
-  let hiddenWindows = allWindows.filter(":hidden");
-  
-  if (hiddenWindows.length === allWindows.length) {
-    // All windows are hidden, show them
-    allWindows.show();
-  } else {
-    // At least one window is visible, hide all windows
-    allWindows.hide();
-  }
-}
+  function toggleAllWindows() {
+    let allWindows = $(".window");
+    let hiddenWindows = allWindows.filter(":hidden");
 
-// Handle show desktop button click
-$(document).on("click", ".quick-launch-button img[alt='Show Desktop']", function () {
-  toggleAllWindows();
-});
+    if (hiddenWindows.length === allWindows.length) {
+      // All windows are hidden, show them
+      allWindows.show();
+    } else {
+      // At least one window is visible, hide all windows
+      allWindows.hide();
+    }
+  }
+
+  function openExplorerWindow() {
+    let windowId = 'window-' + Date.now();
+    const explorerWindow = `
+  <div class="window" style="width: 350px" data-window-id="${windowId}">
+      <div class="title-bar">
+          <div class="title-bar-text">
+              Explorer
+          </div>
+          <div class="title-bar-controls">
+              <button class="minimize-button" aria-label="Minimize"></button>
+              <button class="maximize-button" aria-label="Maximize"></button>
+              <button class="close-button" aria-label="Close"></button>
+          </div>
+      </div>
+      <div class="window-body">
+          <p>Explorer window content goes here.</p>
+      </div>
+  </div>`;
+    $("body").append(explorerWindow);
+
+    // Calculate the position for the new window
+    const windowWidth = $(window).width();
+    const windowHeight = $(window).height();
+    const explorerWindowWidth = $(".window:last").outerWidth();
+    const explorerWindowHeight = $(".window:last").outerHeight();
+    const left = (windowWidth - explorerWindowWidth) / 2;
+    const top = (windowHeight - explorerWindowHeight) / 2;
+
+    // Position the new window in the center
+    $(".window:last").css({ top: top, left: left }).draggable({ handle: ".title-bar" }).resizable();
+
+    createTaskbarEntry("Explorer", windowId);
+  }
+
+  // Handle show explorer button click
+  $(document).on("click", ".show-explorer", function () {
+    openExplorerWindow();
+  });
+
+
+  // Handle show desktop button click
+  $(document).on("click", ".show-desktop", function () {
+    toggleAllWindows();
+  });
 
 
   function createWindow(title) {
@@ -137,56 +177,59 @@ $(document).on("click", ".quick-launch-button img[alt='Show Desktop']", function
     let extensions = ['html', 'php', 'txt'];
     let basePath = 'apps/' + title.toLowerCase();
     let contentFound = false;
-  
+
     function tryLoadContent(index) {
       if (index >= extensions.length) {
         console.error('Failed to load content for ' + title);
         return;
       }
-  
+
       let contentUrl = basePath + '.' + extensions[index];
-  
+
       $.ajax({
         url: contentUrl,
         dataType: 'html',
         success: function (content) {
           if (contentFound) return;
-  
+
           contentFound = true;
           let newWindow = $('<div class="window" style="margin: 32px; width: 350px" data-window-id="' + windowId + '">' +
-          '<div class="title-bar">' +
-          '<div class="title-bar-text">' + title + '</div>' +
-          '<div class="title-bar-controls">' +
-          '<button class="minimize-button" aria-label="Minimize"></button>' +
-          '<button class="maximize-button" aria-label="Maximize"></button>' +
-          '<button class="close-button" aria-label="Close"></button>' +
-          '</div>' +
-          '</div>' +
-          '<div class="window-body">' +
-          '<div style="display: flex; align-items:center;">' + content + '</div>' +
-          '<section class="field-row" style="justify-content: flex-end">' +
-          '<button aria-label="OK">OK</button>' +
-          '</section>' +
-          '</div>' +
-          '</div>');
-        
-        $('body').append(newWindow);
-        
-        makeWindowDraggable(newWindow);
-        maxZIndex++;
-        newWindow.css("zIndex", maxZIndex);
-        toggleMenuBar();
-        
-        // Center the new window on the screen
-        let windowWidth = newWindow.outerWidth();
-        let windowHeight = newWindow.outerHeight();
-        let screenWidth = $(window).width();
-        let screenHeight = $(window).height();
-        let centerX = (screenWidth - windowWidth) / 2;
-        newWindow.css({ left: centerX, top: 0 });
+            '<div class="title-bar">' +
+            '<div class="title-bar-text">' + title + '</div>' +
+            '<div class="title-bar-controls">' +
+            '<button class="minimize-button" aria-label="Minimize"></button>' +
+            '<button class="maximize-button" aria-label="Maximize"></button>' +
+            '<button class="close-button" aria-label="Close"></button>' +
+            '</div>' +
+            '</div>' +
+            '<div class="window-body">' +
+            '<div style="display: flex; align-items:center;">' + content + '</div>' +
+            '<section class="field-row" style="justify-content: flex-end">' +
+            '<button aria-label="OK">OK</button>' +
+            '</section>' +
+            '</div>' +
+            '</div>');
 
-        createTaskbarEntry(title, windowId);
-                
+          $('body').append(newWindow);
+
+          makeWindowDraggable(newWindow);
+          maxZIndex++;
+          newWindow.css("zIndex", maxZIndex);
+          toggleMenuBar();
+
+          // Calculate the position for the new window
+          const windowWidth = $(window).width();
+          const windowHeight = $(window).height();
+          const explorerWindowWidth = $(".window:last").outerWidth();
+          const explorerWindowHeight = $(".window:last").outerHeight();
+          const left = (windowWidth - explorerWindowWidth) / 2;
+          const top = (windowHeight - explorerWindowHeight) / 2;
+
+          // Position the new window in the center
+          $(".window:last").css({ top: top, left: left }).draggable({ handle: ".title-bar" }).resizable();
+
+          createTaskbarEntry(title, windowId);
+
         },
         error: function () {
           if (!contentFound) {
@@ -195,27 +238,27 @@ $(document).on("click", ".quick-launch-button img[alt='Show Desktop']", function
         },
       });
     }
-  
+
     tryLoadContent(0);
   }
-  
-  // Handle OK button click
-$(document).on("click", ".window button[aria-label='OK']", function () {
-  let windowElement = $(this).closest(".window");
-  let windowId = windowElement.data("window-id");
-  windowElement.hide();
-  toggleMenuBar();
 
-  // Remove the entry from the open windows list using the unique window ID
-  $(".open-window-entry[data-window-id='" + windowId + "']").remove();
-});
-  
-// Handle start menu item click
-$(".start-menu-item p").click(function () {
-  let title = $(this).text();
-  createWindow(title);
-});
-  
+  // Handle OK button click
+  $(document).on("click", ".window button[aria-label='OK']", function () {
+    let windowElement = $(this).closest(".window");
+    let windowId = windowElement.data("window-id");
+    windowElement.hide();
+    toggleMenuBar();
+
+    // Remove the entry from the open windows list using the unique window ID
+    $(".open-window-entry[data-window-id='" + windowId + "']").remove();
+  });
+
+  // Handle start menu item click
+  $(".start-menu-item p").click(function () {
+    let title = $(this).text();
+    createWindow(title);
+  });
+
   // Handle exit submenu item click
   $(".sub-menu-item:contains('Exit')").click(function () {
     let visibleWindows = $(".window").filter(":visible");
@@ -251,9 +294,9 @@ $(".start-menu-item p").click(function () {
         let windowId = topWindow.data("window-id"); // Retrieve the window ID from the data attribute
         topWindow.hide();
         toggleMenuBar();
-        
-          // Remove the entry from the open windows list using the unique window ID
-          $(".open-window-entry[data-window-id='" + windowId + "']").remove();
+
+        // Remove the entry from the open windows list using the unique window ID
+        $(".open-window-entry[data-window-id='" + windowId + "']").remove();
 
       }
     }
@@ -262,18 +305,18 @@ $(".start-menu-item p").click(function () {
   function updateTaskbar(windowId) {
     const openWindowEntries = document.querySelectorAll('.open-window-entry');
     openWindowEntries.forEach(entry => {
-        if (entry.dataset.windowId === windowId) {
-            entry.classList.add('selected');
-        } else {
-            entry.classList.remove('selected');
-        }
+      if (entry.dataset.windowId === windowId) {
+        entry.classList.add('selected');
+      } else {
+        entry.classList.remove('selected');
+      }
     });
-}
+  }
 
-function createTaskbarEntry(title, windowId) {
-  let taskbarEntry = $('<div class="open-window-entry" data-window-id="' + windowId + '">' + title + '</div>');
-  $(".open-windows-list").append(taskbarEntry);
-}
+  function createTaskbarEntry(title, windowId) {
+    let taskbarEntry = $('<div class="open-window-entry" data-window-id="' + windowId + '">' + title + '</div>');
+    $(".open-windows-list").append(taskbarEntry);
+  }
 
 
 
