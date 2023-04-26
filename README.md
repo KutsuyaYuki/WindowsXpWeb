@@ -5,3 +5,10 @@ It's going to have a lot of bugs and it's not going to be perfect, but I'm going
 
 Example:
 <img width="1680" alt="Screenshot 2023-04-26 at 23 19 13" src="https://user-images.githubusercontent.com/17732178/234705338-ce0af383-f167-4d39-aa54-a73332b6b203.png">
+
+
+### TODO
+
+* Add desktop icons
+* Add tray icons
+* Add control panel
