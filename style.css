@@ -263,7 +263,7 @@ button[aria-label="Close"].active {
     color: #fff;
     display: none;
     z-index: 3;
-    height: 270px;
+    height: 300px;
     bottom: 50px;
 }
 .start-menu-header {
@@ -374,7 +374,7 @@ button[aria-label="Close"].active {
     background-color: #FFFFFF;
     color: #000;
     font-style: normal;
-    height: 190px;
+    height: 220px;
 }
 .start-menu-group:last-child {
     margin-bottom: 0;
