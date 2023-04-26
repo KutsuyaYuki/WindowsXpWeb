@@ -185,6 +185,8 @@ button[aria-label="Close"].active {
 
 
 .taskbar {
+  display: flex;
+flex-direction: row;
     position: fixed;
     bottom: 0;
     left: 0;
@@ -194,6 +196,34 @@ button[aria-label="Close"].active {
     background: linear-gradient(180deg, #54a0ff 0%, #0072ff 20%, #0072ff 90%, #0065e1 100%);
     border-top: 1px solid #0a246a;
     z-index: 9999;
+}
+
+.quick-launch{
+    display: flex;
+    padding: 0 5px;
+    height: 100%;
+    align-items: center;
+}
+
+.quick-launch button img{
+  margin: auto;
+  display: block;
+}
+
+.quick-launch button{
+  padding: 0;
+  width: 100%;
+  text-align: left;
+  /* background-color: #4d4d4d; */
+  background-color: transparent;
+  border: none;
+  /* color: #fff; */
+  font-weight: bold;
+  cursor: pointer;
+  color: #151829;
+  height: 32px;
+  vertical-align: middle;
+  padding-right: 5px;
 }
 
 .open-windows-list {

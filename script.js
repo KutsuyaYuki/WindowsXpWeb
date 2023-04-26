@@ -112,6 +112,26 @@ $(document).on("click", ".close-button", function () {
     }
   });
 
+  // Toggle all windows function
+function toggleAllWindows() {
+  let allWindows = $(".window");
+  let hiddenWindows = allWindows.filter(":hidden");
+  
+  if (hiddenWindows.length === allWindows.length) {
+    // All windows are hidden, show them
+    allWindows.show();
+  } else {
+    // At least one window is visible, hide all windows
+    allWindows.hide();
+  }
+}
+
+// Handle show desktop button click
+$(document).on("click", ".quick-launch-button img[alt='Show Desktop']", function () {
+  toggleAllWindows();
+});
+
+
   function createWindow(title) {
     let windowId = 'window-' + Date.now();
     let extensions = ['html', 'php', 'txt'];
