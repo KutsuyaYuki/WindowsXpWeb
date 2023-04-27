@@ -71,6 +71,19 @@
     .movie-icon {
         background-image: url('images/icons/movie.png');
     }
+
+    .file-table {
+        flex-grow: 1;
+        background-color: white;
+    }
+
+    .file-table table {
+        box-shadow: none;
+    }
+
+    #address-bar {
+        flex-grow: 1;
+    }
 </style>
 <script>
     function navigate<?php echo $_GET['windowId']; ?>() {
@@ -118,19 +131,20 @@
 <div class="explorer_navigation">
     <div onclick="window.history.back();" class="explorer_back_button"><img src="./images/icons/back.png" /></div>
     <div onclick="window.history.forward();" class="explorer_forward_button"><img src="./images/icons/forward.png" /></div>
-    <input type="text" id="address-bar" value="" style="width: 70%;">
+    <input type="text" id="address-bar" value="">
     <div class="explorer_go_button" onclick="navigate<?php echo $_GET['windowId']; ?>();"><img src="./images/icons/go.png" />  Go
     </div>
 </div>
-
-<table>
-    <thead>
-        <tr>
-            <th colspan="2">Name</th>
-            <th>Size</th>
-            <th>Creation Date</th>
-        </tr>
-    </thead>
-    <tbody>
-    </tbody>
-</table>
+<div class="file-table">
+    <table>
+        <thead>
+            <tr>
+                <th colspan="2">Name</th>
+                <th>Size</th>
+                <th>Creation Date</th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+</div>
