@@ -18,7 +18,7 @@ body {
     position: absolute;
   }
   .window-body {
-    margin: 8px;
+    margin: 3px;
   }
   .field-row {
     display: flex;
@@ -519,6 +519,71 @@ flex-direction: row;
     background-color: #6388b4;
     cursor: nwse-resize;
     z-index: 2;
+}
+
+.explorer_navigation {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  height: 32px;
+  background-color: #E7E4D0;
+  border-top: #FCF9E0 1px solid;
+}
+
+.explorer_back_button{
+  cursor: pointer;
+  border: none;
+  padding: 0;
+  margin-left: 5px;
+  margin-right: 5px;
+  width: 30px;
+  display: flex;
+  flex-direction: row;
+}
+
+.explorer_back_button img {
+  display: block;
+  width: 24px;
+  height: 24px;
+  margin-right: 3px;
+}
+
+
+.explorer_forward_button{
+  cursor: pointer;
+  border: none;
+  padding: 0;
+  margin-left: 5px;
+  margin-right: 5px;
+  width: 30px;
+  display: flex;
+  flex-direction: row;
+}
+
+.explorer_forward_button img {
+  display: block;
+  width: 24px;
+  height: 24px;
+  margin-right: 3px;
+}
+
+.explorer_go_button {
+  cursor: pointer;
+  border: none;
+  padding: 0;
+  margin-left: 5px;
+  margin-right: 5px;
+  width: 79px;
+  display: flex;
+  flex-direction: row;
+}
+
+.explorer_go_button img {
+  display: block;
+  width: 24px;
+  height: 24px;
+  margin-right: 3px;
 }
 
 

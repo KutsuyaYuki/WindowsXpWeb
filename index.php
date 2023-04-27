@@ -62,7 +62,7 @@
                 <div class="start-menu-body">
                     <div class="start-menu-group-right">
                         <div class="start-menu-group-right-items">
-                            <button class="start-menu-button start-menu-item">
+                            <button class="start-menu-button start-menu-item" data-programfile="explorer">
                                 <p>Documents</p>
                             </button>
                             <button class="start-menu-button start-menu-item">

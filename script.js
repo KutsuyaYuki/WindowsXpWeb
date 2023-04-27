@@ -17,7 +17,7 @@ $(function () {
     $(document).on("click", ".show-explorer", handleShowExplorerButtonClick);
     $(document).on("click", ".show-desktop", handleShowDesktopButtonClick);
     $(document).on("click", ".window button[aria-label='OK']", handleCloseButtonClick);
-    $(".start-menu-item p").click(handleStartMenuItemClick);
+    $(".start-menu-item").click(handleStartMenuItemClick);
     $(".sub-menu-item:contains('Exit')").click(handleExitSubMenuItemClick);
     $(document).keyup(handleEscapeKeyPress);
 
@@ -120,8 +120,8 @@ $(function () {
   function handleShowExplorerButtonClick() {
     let explorerWindow = $(".window[data-window-id='explorer-window']");
     if (explorerWindow.length === 0) {
-      let windowId = 'window' + Date.now();
-      createNewWindow(windowId, "Explorer", "<p>Explorer window content here</p>");
+      let basePath = 'apps/explorer';
+      createWindowFromFromFile(basePath, "Explorer");
     } else {
       explorerWindow.show();
     }
@@ -141,42 +141,9 @@ $(function () {
   }
 
   function handleStartMenuItemClick() {
-    let title = $(this).text();
-    let extensions = ['html', 'php', 'txt'];
-    let basePath = 'apps/' + title.toLowerCase();
-    let contentFound = false;
-
-    function tryLoadContent(index) {
-      if (index >= extensions.length) {
-        console.error('Failed to load content for ' + title);
-        return;
-      }
-
-      let windowId = 'window' + Date.now();
-      let contentUrl = basePath + '.' + extensions[index] + '?windowId=' + windowId;
-
-      $.ajax({
-        url: contentUrl,
-        dataType: 'html',
-        success: function (content) {
-          if (contentFound) return;
-
-          contentFound = true;
-          buttons = null;
-
-          createNewWindow(windowId, title, content, buttons);
-
-        },
-        error: function () {
-          if (!contentFound) {
-            tryLoadContent(index + 1);
-          }
-        },
-      });
-    }
-
-    tryLoadContent(0);
-
+    let programFile = $(this).data("programfile");
+    let basePath = 'apps/' + programFile;
+    createWindowFromFromFile(basePath, programFile.replace(/^./, programFile[0].toUpperCase()));
     $(".start-menu").hide();
     startMenuOpen = false;
   }
@@ -211,6 +178,42 @@ $(function () {
   function createTaskbarEntry(title, windowId) {
     let taskbarEntry = $('<div class="open-window-entry" data-window-id="' + windowId + '">' + title + '</div>');
     $(".open-windows-list").append(taskbarEntry);
+  }
+
+  function createWindowFromFromFile(fileName, title) {
+    let extensions = ['html', 'php', 'txt'];
+    let contentFound = false;
+
+    function tryLoadContent(index) {
+      if (index >= extensions.length) {
+        console.error('Failed to load content for ' + title);
+        return;
+      }
+
+      let windowId = 'window' + Date.now();
+      let contentUrl = fileName + '.' + extensions[index] + '?windowId=' + windowId;
+
+      $.ajax({
+        url: contentUrl,
+        dataType: 'html',
+        success: function (content) {
+          if (contentFound) return;
+
+          contentFound = true;
+          buttons = null;
+
+          createNewWindow(windowId, title, content, buttons);
+
+        },
+        error: function () {
+          if (!contentFound) {
+            tryLoadContent(index + 1);
+          }
+        },
+      });
+    }
+
+    tryLoadContent(0);
   }
 
   function createNewWindow(windowId, title, content, buttons) {

@@ -115,11 +115,12 @@
     });
 </script>
 <h1>File Browser</h1>
-<div>
-    <button onclick="window.history.back();">Back</button>
-    <button onclick="window.history.forward();">Forward</button>
+<div class="explorer_navigation">
+    <div onclick="window.history.back();" class="explorer_back_button"><img src="./images/icons/back.png" /></div>
+    <div onclick="window.history.forward();" class="explorer_forward_button"><img src="./images/icons/forward.png" /></div>
     <input type="text" id="address-bar" value="" style="width: 70%;">
-    <button onclick="navigate<?php echo $_GET['windowId']; ?>();">Go</button>
+    <div class="explorer_go_button" onclick="navigate<?php echo $_GET['windowId']; ?>();"><img src="./images/icons/go.png" />  Go
+    </div>
 </div>
 
 <table>
