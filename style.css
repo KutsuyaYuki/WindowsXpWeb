@@ -16,6 +16,8 @@ body {
     -webkit-font-smoothing: antialiased;
     background: #ece9d8;
     position: absolute;
+    overflow: hidden;
+    resize: both;
   }
   .window-body {
     margin: 3px;

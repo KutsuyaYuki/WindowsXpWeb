@@ -251,7 +251,7 @@ $(function () {
     const top = (windowHeight - newWindowHeight) / 2;
 
     // Position the new window in the center
-    newWindow.css({ top: top, left: left }).resizable();
-
+    newWindow.css({ top: top, left: left });
+    newWindow.resizable();
   }
 });
