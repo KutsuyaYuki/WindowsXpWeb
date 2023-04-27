@@ -3,7 +3,7 @@ $(function () {
   let startMenuOpen = false;
 
   initialize();
-  
+
   function initialize() {
     registerInitialWindow();
     makeAllWindowsDraggable();
@@ -160,8 +160,8 @@ $(function () {
           if (contentFound) return;
 
           contentFound = true;
-
-          createNewWindow(title, content);
+          buttons = null;
+          createNewWindow(title, content, buttons);
 
         },
         error: function () {
@@ -210,7 +210,7 @@ $(function () {
     $(".open-windows-list").append(taskbarEntry);
   }
 
-  function createNewWindow(title, content) {
+  function createNewWindow(title, content, buttons) {
     let windowId = 'window-' + Date.now();
     // You can define the contents and structure of the new Explorer window here.
     // This is just a sample structure, modify it to fit your needs.
@@ -225,6 +225,9 @@ $(function () {
       </div>
       <div class="window-body">
       ${content}
+      <section class="field-row" style="justify-content: flex-end">
+        <button aria-label="OK">OK</button>
+      </section>
       </div>
     </div>`);
 
