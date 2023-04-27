@@ -120,7 +120,8 @@ $(function () {
   function handleShowExplorerButtonClick() {
     let explorerWindow = $(".window[data-window-id='explorer-window']");
     if (explorerWindow.length === 0) {
-      createNewWindow("Explorer", "<p>Explorer window content here</p>");
+      let windowId = 'window' + Date.now();
+      createNewWindow(windowId, "Explorer", "<p>Explorer window content here</p>");
     } else {
       explorerWindow.show();
     }
@@ -151,7 +152,8 @@ $(function () {
         return;
       }
 
-      let contentUrl = basePath + '.' + extensions[index];
+      let windowId = 'window' + Date.now();
+      let contentUrl = basePath + '.' + extensions[index] + '?windowId=' + windowId;
 
       $.ajax({
         url: contentUrl,
@@ -161,7 +163,8 @@ $(function () {
 
           contentFound = true;
           buttons = null;
-          createNewWindow(title, content, buttons);
+
+          createNewWindow(windowId, title, content, buttons);
 
         },
         error: function () {
@@ -210,8 +213,7 @@ $(function () {
     $(".open-windows-list").append(taskbarEntry);
   }
 
-  function createNewWindow(title, content, buttons) {
-    let windowId = 'window-' + Date.now();
+  function createNewWindow(windowId, title, content, buttons) {
     // You can define the contents and structure of the new Explorer window here.
     // This is just a sample structure, modify it to fit your needs.
     const explorerWindow = $(`<div class="window" data-window-id="${windowId}">
