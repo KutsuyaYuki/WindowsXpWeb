@@ -29,9 +29,12 @@
                 <img style="width: 25px; height: 25px;" src="//i.imgur.com/rJnYQnG.png" alt="">
                 <p>　Cats are evil, but cute</p>
             </div>
+            <div class="window-spacer"></div>
+            <div class="window_ok_button">
             <section class="field-row" style="justify-content: flex-end">
                 <button aria-label="OK">OK</button>
             </section>
+            </div>
         </div>
     </div>
 

@@ -91,7 +91,37 @@
         openFolder<?php echo $_GET['windowId']; ?>(path);
     }
 
-    function openFolder<?php echo $_GET['windowId']; ?>(path) {
+    var pathHistory = [];
+    var historyIndex = -1;
+    var currentPath = 'os/';
+
+    function goBack<?php echo $_GET['windowId']; ?>() {
+        if (historyIndex > 0) {
+            historyIndex--;
+            var previousPath = pathHistory[historyIndex];
+            currentPath = previousPath;
+            openFolder<?php echo $_GET['windowId']; ?>(currentPath, false);
+        }
+    }
+
+    function goForward<?php echo $_GET['windowId']; ?>() {
+        if (historyIndex < pathHistory.length - 1) {
+            historyIndex++;
+            var nextPath = pathHistory[historyIndex];
+            currentPath = nextPath;
+            openFolder<?php echo $_GET['windowId']; ?>(currentPath, false);
+        }
+    }
+
+    function openFolder<?php echo $_GET['windowId']; ?>(path, updateHistory = true) {
+        if (updateHistory) {
+            if (historyIndex < pathHistory.length - 1) {
+                pathHistory = pathHistory.slice(0, historyIndex + 1);
+            }
+            pathHistory.push(path);
+            historyIndex++;
+        }
+
         var xhr = new XMLHttpRequest();
         xhr.onreadystatechange = function() {
             if (xhr.readyState == 4 && xhr.status == 200) {
@@ -129,10 +159,10 @@
 </script>
 <h1>File Browser</h1>
 <div class="explorer_navigation">
-    <div onclick="window.history.back();" class="explorer_back_button"><img src="./images/icons/back.png" /></div>
-    <div onclick="window.history.forward();" class="explorer_forward_button"><img src="./images/icons/forward.png" /></div>
+    <div onclick="goBack<?php echo $_GET['windowId']; ?>();" class="explorer_back_button"><img src="./images/icons/back.png" /></div>
+    <div onclick="goForward<?php echo $_GET['windowId']; ?>();" class="explorer_forward_button"><img src="./images/icons/forward.png" /></div>
     <input type="text" id="address-bar" value="">
-    <div class="explorer_go_button" onclick="navigate<?php echo $_GET['windowId']; ?>();"><img src="./images/icons/go.png" />  Go
+    <div class="explorer_go_button" onclick="navigate<?php echo $_GET['windowId']; ?>();"><img src="./images/icons/go.png" /> Go
     </div>
 </div>
 <div class="file-table">

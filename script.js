@@ -235,6 +235,9 @@ $(function () {
       </section>
       </div>
     </div>`);
+    
+      // Set the width and height of the window
+  explorerWindow.css({ width: 640, height: 400 });
 
     $("body").append(explorerWindow);
     makeWindowDraggable(explorerWindow);
