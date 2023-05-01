@@ -120,7 +120,7 @@ $(function () {
   function handleShowExplorerButtonClick() {
     let explorerWindow = $(".window[data-window-id='explorer-window']");
     if (explorerWindow.length === 0) {
-      let basePath = 'apps/explorer';
+      let basePath = 'apps/explorer/explorer';
       createWindowFromFromFile(basePath, "Explorer");
     } else {
       explorerWindow.show();
@@ -142,7 +142,7 @@ $(function () {
 
   function handleStartMenuItemClick() {
     let programFile = $(this).data("programfile");
-    let basePath = 'apps/' + programFile;
+    let basePath = 'apps/' + programFile + '/' + programFile;
     createWindowFromFromFile(basePath, programFile.replace(/^./, programFile[0].toUpperCase()));
     $(".start-menu").hide();
     startMenuOpen = false;
